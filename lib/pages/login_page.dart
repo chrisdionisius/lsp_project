@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lsp_project/pages/register_page.dart';
 
+import '../models/user.dart';
 import '../services/db_helper.dart';
 import 'home_page.dart';
 
@@ -18,6 +19,11 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> login() async {
     return await DataHelper()
         .authUser(_usernameController.text, _passwordController.text);
+  }
+
+  Future<User> getUser() async {
+    return await DataHelper()
+        .fetchUser(_usernameController.text, _passwordController.text);
   }
 
   @override
@@ -80,12 +86,22 @@ class _LoginPageState extends State<LoginPage> {
                       : login().then(
                           (value) {
                             if (value) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomePage(),
-                                ),
-                              );
+                              getUser().then((value) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                      user: value,
+                                    ),
+                                  ),
+                                );
+                              });
+                              // Navigator.pushReplacement(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => HomePage(user: ),
+                              //   ),
+                              // );
                             } else {
                               showDialog(
                                 context: context,

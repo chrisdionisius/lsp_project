@@ -65,6 +65,19 @@ class DataHelper {
     }
   }
 
+  Future<User> fetchUser(String username, password) async {
+    db = await initDb();
+    password = hashPassword(password);
+    var result = await db.rawQuery('''
+      SELECT * FROM users WHERE username = '$username' AND password = '$password'
+    ''');
+    if (result.isNotEmpty) {
+      return User.fromJson(result.first);
+    } else {
+      return User();
+    }
+  }
+
   //update password
   Future<bool> updatePassword(String oldPassword, String newPassword) async {
     db = await initDb();
